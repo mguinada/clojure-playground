@@ -10,7 +10,6 @@
 
 (fact 10)
 
-;; a data recursive alternative base on lazy seqs!
 ;; in clojure this is usually more eficiente than recursion
 (defn fact
   [n]
