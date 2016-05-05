@@ -1,8 +1,7 @@
 (ns playground.recursion
-  (:refer-clojure :exclude [repeat]))
+  (:refer-clojure :exclude [repeat reverse]))
 
 ;; Recursive length of a collection
-
 (defn length
   ([coll]
    (length coll 0))
@@ -12,6 +11,16 @@
      (recur (rest coll) (inc sum)))))
 
 (length '(1 2 3 4 5))
+
+;; repeats val n times in a collection
+(defn repeat
+  ([val n] (repeat val n '()))
+  ([val n coll]
+   (if (zero? n)
+     coll
+     (recur val (dec n) (cons val coll)))))
+
+(repeat :x 5)
 
 ;; Factorial
 
@@ -24,7 +33,8 @@
 
 (fact 10)
 
-;; compute factorial with a lazy seq.
+;; NOTE: non-recursive alternative implementation
+;; Compute factorial with a lazy seq.
 ;; In clojure this is usually more efficient than recursion.
 ;; It won't blow the stack because range returns a lazy seq, and reduce walks
 ;; across the seq without holding onto the head. reduce makes use of chunked seqs if it can
