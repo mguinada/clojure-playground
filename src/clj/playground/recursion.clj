@@ -1,4 +1,17 @@
-(ns playground.recursion)
+(ns playground.recursion
+  (:refer-clojure :exclude [repeat]))
+
+;; Recursive length of a collection
+
+(defn length
+  ([coll]
+   (length coll 0))
+  ([coll sum]
+   (if (empty? coll)
+     sum
+     (recur (rest coll) (inc sum)))))
+
+(length '(1 2 3 4 5))
 
 ;; Factorial
 
