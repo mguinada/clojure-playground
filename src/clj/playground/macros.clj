@@ -1,4 +1,4 @@
-(ns clojure-playground.macros)
+(ns playground.macros)
 
 (defmacro for-each
   [holder _ coll body]

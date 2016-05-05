@@ -1,4 +1,4 @@
-(ns clojure-playground.recursion)
+(ns playground.recursion)
 
 ;; Factorial
 
@@ -57,9 +57,9 @@
       coll
       (recur (inc p) (remove #(and (zero? (mod % p)) (not= % p)) coll)))))
 
-(primes-recurr 600)
+(primes-recurr 60)
 
-;; Prime numbers lazy seq
+;; Sieve of Eratosthenes prime numbers lazy seq
 (defn primes
   ([]
    (primes (iterate inc 2)))
@@ -67,5 +67,5 @@
    (cons (first seq)
          (lazy-seq (primes (filter #(not= 0 (mod % (first seq))) (rest seq)))))))
 
-(take 109 (primes))
-(nth (primes) 108)
+(take 17 (primes))
+(nth (primes) (dec 17))

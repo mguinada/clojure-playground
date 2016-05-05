@@ -1,4 +1,4 @@
-(ns clojure-playground.euler.p1)
+(ns playground.euler.p1)
 
 (defn multiple-of-3-or-5?
   [n]

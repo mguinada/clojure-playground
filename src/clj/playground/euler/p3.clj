@@ -1,4 +1,4 @@
-(ns clojure-playground.euler.p3)
+(ns playground.euler.p3)
 
 ;; https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
 ;;
