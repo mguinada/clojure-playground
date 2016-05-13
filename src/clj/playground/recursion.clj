@@ -1,7 +1,8 @@
 (ns playground.recursion
   (:refer-clojure :exclude [repeat reverse]))
 
-;; Recursive length of a collection
+;; recursive length of a collection
+
 (defn length
   ([coll]
    (length coll 0))
@@ -13,6 +14,7 @@
 (length '(1 2 3 4 5))
 
 ;; repeats val n times in a collection
+
 (defn repeat
   ([val n] (repeat val n '()))
   ([val n coll]
@@ -73,14 +75,14 @@
 ;; 3. Enumerate the multiples of p by counting to n from 2p in increments of p, and mark them in the list (these will be 2p, 3p, 4p, ... the p itself should not be marked).
 ;; 4. Find the first number greater than p in the list that is not marked. If there was no such number, stop. Otherwise, let p now equal this new number (which is the next prime), and repeat from step 3.
 
-(defn primes-recurr
+(defn primes-recur
   [n]
   (loop [p 2 coll (range 2 (inc n))]
     (if (nil? (first (drop-while (partial >= p) coll)))
       coll
       (recur (inc p) (remove #(and (zero? (mod % p)) (not= % p)) coll)))))
 
-(primes-recurr 60)
+(primes-recur 60)
 
 ;; Sieve of Eratosthenes prime numbers lazy seq
 (defn primes
