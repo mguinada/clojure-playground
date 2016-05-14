@@ -6,12 +6,14 @@
 
 (defn divisors
   [n]
-  (sort (into [n] (filter #(zero? (rem n %)) (range 1 (inc (long (Math/sqrt n))))))))
+  (let [r (range 1 (inc (long (Math/sqrt n))))]
+    (sort (into [n] (filter #(zero? (rem n %)) r)))))
 
 (defn prime?
   "Predicate that returns true if n is a prime number"
   [n]
-  (and (> n 1) (= (set [1 n]) (set (divisors n)))))
+  (and (> n 1)
+       (= (set [1 n]) (set (divisors n)))))
 
 (defn prime-factors
   [n]
