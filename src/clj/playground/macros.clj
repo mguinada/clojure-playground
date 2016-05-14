@@ -16,3 +16,5 @@
 
 (for-each e in (range 1 10)
           (println "element is" e))
+
+(defmacro is-lazy? [x] `(instance? clojure.lang.LazySeq ~x))
