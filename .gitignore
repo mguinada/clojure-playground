@@ -14,9 +14,8 @@ pom.xml.asc
 .nrepl-port
 log/
 .lein-env
-.\#*
 .idea/
 figwheel_server.log
 .vagrant/
 .nrepl-history
-.\#*
+\#*\#
