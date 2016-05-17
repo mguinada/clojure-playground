@@ -94,3 +94,11 @@
 
 (take 17 (primes))
 (nth (primes) (dec 17))
+
+
+;; Triangular numbers - https://en.wikipedia.org/wiki/Triangular_number
+
+(def triangular-numbers
+  (map #(long (/ (* % (inc %)) 2)) (iterate inc 1)))
+
+(take 28 triangular-numbers)
