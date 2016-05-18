@@ -95,6 +95,12 @@
 (take 17 (primes))
 (nth (primes) (dec 17))
 
+;; https://en.wikipedia.org/wiki/Divisor
+
+(defn divisors
+  "Produces a lazy seq of the factors of a number"
+  [n]
+  (lazy-cat (filter #(zero? (rem n %)) (range 1 (inc (/ n 2)))) [n]))
 
 ;; Triangular numbers - https://en.wikipedia.org/wiki/Triangular_number
 
@@ -102,3 +108,17 @@
   (map #(long (/ (* % (inc %)) 2)) (iterate inc 1)))
 
 (take 28 triangular-numbers)
+
+;; Perfect numbers - http://world.mathigon.org/Sequences
+
+(defn perfect-number?
+  "A perfect number is equal to the sum of all of it's
+  divisors excluding the numner it self"
+  [n]
+  (letfn [(factors [n] (->> (range 2 (inc (quot n 2)))
+                            (filter #(zero? (rem n %)))
+                            (cons 1)))]
+    (= n (apply + (factors n)))))
+
+(def perfect-numbers
+  (filter perfect-number? (iterate inc 6)))
