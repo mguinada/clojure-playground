@@ -1,6 +1,7 @@
 (set-env!
  :source-paths    #{"src/clj"}
- :dependencies '[[adzerk/boot-reload "0.4.1" :scope "test"]])
+ :dependencies '[[adzerk/boot-reload "0.4.1" :scope "test"]
+                 [org.clojure/math.numeric-tower "0.0.4"]])
 
 (require
  '[boot.task.built-in          :refer [aot]]
