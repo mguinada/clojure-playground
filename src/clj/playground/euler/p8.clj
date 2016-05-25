@@ -31,9 +31,9 @@
 
 
 ;; Recursive approach
-(defn adjacent-max
+(defn adjacent-max-recur
   ([digits]
-   (adjacent-max adjacent-numbers digits 0))
+   (adjacent-max-recur adjacent-numbers digits 0))
   ([coll digits maxval]
    (if (< (count coll) digits)
      maxval
@@ -41,13 +41,32 @@
            product (apply * (map #(Character/digit % 10) adjacents))]
        (recur (rest coll) digits (if (> product maxval) product maxval))))))
 
+(time (adjacent-max-recur 4))
+(time (adjacent-max-recur 13))
+
 ;; Functional approach (Faster and simpler)
 (defn adjacent-max
   [digits]
-  (->> (map #(Character/digit % 10) adjacent-numbers)
+  (->> adjacent-numbers
+       (map #(Character/digit % 10))
        (partition digits 1)
        (map (partial apply *))
        (apply max)))
 
 (time (adjacent-max 4))
 (time (adjacent-max 13))
+
+;; Finite lazy seq approach
+;; more at: https://clojuredocs.org/clojure.core/lazy-seq#example-5743e48ee4b0a1a06bdee49a
+(defn adjacent-products
+  ([num-digits] (adjacent-products adjacent-numbers num-digits))
+  ([adjacent-numbers num-digits]
+   (let [adjacent-digits (->> adjacent-numbers (map #(Character/digit % 10)) (partition num-digits 1))]
+     (letfn [(adjacent-products* [adjacents]
+               (lazy-seq
+                (when (not (empty? adjacents))
+                  (cons (apply * (first adjacents)) (adjacent-products* (rest adjacents))))))]
+       (adjacent-products* adjacent-digits)))))
+
+(time (apply max (adjacent-products 4)))
+(time (apply max (adjacent-products 13)))
