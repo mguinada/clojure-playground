@@ -95,6 +95,24 @@
 (take 17 (primes))
 (nth (primes) (dec 17))
 
+;; Efficient prime number lazy sequence
+;;
+;; See more at https://web.archive.org/web/20150710134640/http://diditwith.net/2009/01/20/YAPESProblemSevenPart2.aspx
+;; or at https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf (The Genuine Sieve of Eratosthenes2, by Melissa E. O’Neill)
+
+(defn primes
+  []
+  (letfn [(reinsert [table value factor] (update table (+ value factor) conj factor))
+          (primes* [composites value] (if-let [factors (get composites value)]
+                                        (recur (reduce #(reinsert %1 value %2) (dissoc composites value) factors) (inc value))
+                                        (lazy-seq (cons value (primes* (assoc composites (* value value) [value]) (inc value))))))]
+    (primes* {} 2)))
+
+(take 17 (primes))
+(nth (primes) (dec 17))
+
+;; see also http://clj-me.cgrand.net/2009/07/30/everybody-loves-the-sieve-of-eratosthenes/
+
 ;; https://en.wikipedia.org/wiki/Divisor
 
 (defn divisors
