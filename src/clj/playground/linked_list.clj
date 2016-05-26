@@ -39,7 +39,7 @@
         (seq acc)
         (recur (.cdr current) (conj acc (.car current)))))))
 
-(defn- node
+(defn node
   "Creates a linked list node"
   ([] (node nil nil))
   ([car] (node car nil))
@@ -52,20 +52,26 @@
   ([a b] (node a (node b)))
   ([a b & more]
    (let [head (linked-list a b)
-         tail (cdr head)
+         tail (.cdr head)
          link (fn [current-node new-value]
                 (-> current-node
                     (set-cdr! (node new-value))
-                    (cdr)))]
+                    (.cdr)))]
      (reduce link tail more)
      head)))
 
 ;; printers
 (defmethod print-method EmptyListNode [node ^java.io.Writer w]
-  (.write w (str "<()>")))
+  (.write w (str "#linked-list ()")))
+
+(defmethod print-dup EmptyListNode [node ^java.io.Writer w]
+  (print-method node w))
 
 (defmethod print-method Node [node ^java.io.Writer w]
-  (.write w (str "<" (seq node) ">")))
+  (.write w (str "#linked-list " (seq node) "")))
+
+(defmethod print-dup Node [node ^java.io.Writer w]
+  (print-method node w))
 
 ;;
 ;; DEMO
