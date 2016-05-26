@@ -7,11 +7,18 @@
   (set-car! [node value] "sets the value of car")
   (set-cdr! [mode value] "sets the value of cdr"))
 
-(declare LINKED-LIST-EMPTY-NODE)
+(deftype EmptyListNode []
+  INode
+  (car [_] nil)
+  (cdr [_] nil)
+  Counted
+  (count [_] 0)
+  Seqable
+  (seq [_] (seq [])))
 
-(defn empty-list?
-  [llist]
-  (= llist LINKED-LIST-EMPTY-NODE))
+(def EMPTY (->EmptyListNode))
+
+(defn empty-list? [ll] (instance? EmptyListNode ll))
 
 (deftype Node [^:volatile-mutable car ^:volatile-mutable cdr]
   INode
@@ -21,20 +28,16 @@
   (set-cdr! [this value] (set! cdr value) this)
   Counted
   (count [this]
-    (if (empty-list? this)
-      0
-      (loop [current this counter 0]
-        (if (nil? current)
-          counter
-          (recur (.cdr current) (inc counter))))))
+    (loop [current this counter 0]
+      (if (nil? current)
+        counter
+        (recur (.cdr current) (inc counter)))))
   Seqable
   (seq [this]
-    (if (empty-list? this)
-      (seq [])
-      (loop [current this acc []]
-        (if (nil? current)
-          (seq acc)
-          (recur (.cdr current) (conj acc (.car current))))))))
+    (loop [current this acc []]
+      (if (nil? current)
+        (seq acc)
+        (recur (.cdr current) (conj acc (.car current)))))))
 
 (defn- node
   "Creates a linked list node"
@@ -42,11 +45,9 @@
   ([car] (node car nil))
   ([car cdr] (->Node car cdr)))
 
-(def LINKED-LIST-EMPTY-NODE (node))
-
 (defn linked-list
   "Creats a new linked list from the given args"
-  ([] LINKED-LIST-EMPTY-NODE)
+  ([] EMPTY)
   ([a] (node a))
   ([a b] (node a (node b)))
   ([a b & more]
@@ -59,20 +60,30 @@
      (reduce link tail more)
      head)))
 
-;; printer
+;; printers
+(defmethod print-method EmptyListNode [node ^java.io.Writer w]
+  (.write w (str "<()>")))
+
 (defmethod print-method Node [node ^java.io.Writer w]
   (.write w (str "<" (seq node) ">")))
+
+;;
+;; DEMO
+;;
 
 ;; node value reading
 
 (car (node :a))
 
 ;; a composed linked list
+
 (node :a (node :b (node :c)))
+
 (def llist (node :a (node :b (node :c))))
 
 ;; it's Seqable
 (seq llist)
+(seq (linked-list))
 
 (linked-list)
 (linked-list :a)
@@ -85,6 +96,9 @@
 (map str llist)
 (reduce + (apply linked-list (range 10)))
 
+(empty-list? (linked-list))
+(empty-list? (linked-list :a))
+
 ;; Countable
 
 (count (linked-list))
@@ -95,9 +109,7 @@
 
 (require '[clojure.tools.trace :as t])
 
-;(t/trace (linked-list :a :b :c))
-(t/trace-vars linked-list)
-
+;(t/trace-vars linked-list)
 
 
 ;; TODO
