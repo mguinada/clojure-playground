@@ -1,6 +1,7 @@
 (ns playground.linked-list
-  (:import [clojure.lang Seqable Counted]
-           [java.lang UnsupportedOperationException]))
+  (:import
+   [java.lang UnsupportedOperationException]
+   [clojure.lang Seqable Counted IPersistentList IPersistentCollection ITransientCollection Sequential]))
 
 (defprotocol INode
   (car [node] "yields the value of the node")
@@ -8,23 +9,7 @@
   (set-car! [node value] "sets the value of car")
   (set-cdr! [mode value] "sets the value of cdr"))
 
-
-(deftype EmptyListNode []
-  INode
-  (car [_] nil)
-  (set-car! [_ _]
-    (throw (UnsupportedOperationException. "can't set car on an empty node")))
-  (cdr [_] nil)
-  (set-cdr! [_ _ ]
-    (throw (UnsupportedOperationException. "can't set cdr on an empty node")))
-  Counted
-  (count [_] 0)
-  Seqable
-  (seq [_] (seq [])))
-
-(def EMPTY (->EmptyListNode))
-
-(defn empty-list? [ll] (instance? EmptyListNode ll))
+(declare node linked-list)
 
 (deftype Node [^:volatile-mutable car ^:volatile-mutable cdr]
   INode
@@ -32,6 +17,22 @@
   (set-car! [this value] (set! car value) this)
   (cdr [_] cdr)
   (set-cdr! [this value] (set! cdr value) this)
+  IPersistentCollection
+  (cons [this value]
+    (node value this))
+  (empty [this]
+    (linked-list))
+  (equiv [this value]
+    (if (instance? Node value)
+      (and (= (.car this) (.car value))
+           (- (.cdr this) (.cdr value)))))
+  ITransientCollection
+  (conj [this value]
+    (node value this))
+  (persistent [this]
+    (vec (seq this)))
+  IPersistentList
+  Sequential
   Counted
   (count [this]
     (loop [current this counter 0]
@@ -45,7 +46,35 @@
         (seq acc)
         (recur (.cdr current) (conj acc (.car current)))))))
 
-(defn node
+(deftype EmptyListNode []
+  INode
+  (car [_] nil)
+  (set-car! [_ _]
+    (throw (UnsupportedOperationException. "can't set car on an empty node")))
+  (cdr [_] nil)
+  (set-cdr! [_ _ ]
+    (throw (UnsupportedOperationException. "can't set cdr on an empty node")))
+  IPersistentCollection
+  (cons [_ value]
+    (node value))
+  (empty [this] this)
+  (equiv [_ value]
+    (instance? EmptyListNode value))
+  ITransientCollection
+  (conj [_ value]
+    (node value))
+  (persistent [_]
+    [])
+  IPersistentList
+  Sequential
+  Counted
+  (count [_] 0)
+  Seqable
+  (seq [_] (seq [])))
+
+(def EMPTY (->EmptyListNode))
+
+(defn- node
   "Creates a linked list node"
   ([] (node nil nil))
   ([car] (node car nil))
@@ -59,8 +88,8 @@
   ([a b & more]
    (let [head (linked-list a b)
          tail (.cdr head)
-         link (fn [current-node new-value]
-                (-> current-node
+         link (fn [current new-value]
+                (-> current
                     (set-cdr! (node new-value))
                     (.cdr)))]
      (reduce link tail more)
@@ -91,25 +120,29 @@
 
 (node :a (node :b (node :c)))
 
-(def llist (node :a (node :b (node :c))))
-
-;; it's Seqable
-(seq llist)
-(seq (linked-list))
-
 (linked-list)
 (linked-list :a)
 (linked-list :a :b)
 (linked-list :a :b :c)
-(linked-list :a :b :c :d :e :f)
 
-(def llist (linked-list :a :b :c :d :e :f))
+;; map and reduce
 
-(map str llist)
+(map (comp str name) (linked-list :a :b :c :d :e :f))
 (reduce + (apply linked-list (range 10)))
 
-(empty-list? (linked-list))
-(empty-list? (linked-list :a))
+;; it's Seqable
+
+(seq (linked-list :a :b :c :d :e :f))
+(seq (linked-list))
+
+(first (linked-list))
+(first (linked-list :a :b :c :d :e :f))
+
+(rest (linked-list))
+(rest (linked-list :a :b :c :d :e :f))
+
+(next (linked-list))
+(next (linked-list :a :b :c :d :e :f))
 
 ;; Countable
 
@@ -118,6 +151,31 @@
 (count (linked-list :a :b))
 (count (linked-list :a :b :c))
 (count (linked-list :a :b :c :d :e :f))
+
+;; conj & etc.
+(conj (linked-list :b :c :d :e :f) :a)
+(conj (linked-list) :a)
+
+(cons :a (linked-list :b :c :d :e :f))
+(cons :a (linked-list))
+
+(empty (linked-list :a :b :c))
+(empty (linked-list))
+
+(empty? (linked-list :a))
+(empty? (linked-list))
+
+(into (linked-list) [1 2 3])
+(into (linked-list 0) [1 2 3])
+
+(sequential? (linked-list :a :b :c))
+(sequential? (linked-list))
+
+(list? (linked-list :a :b :c))
+(list? (linked-list))
+
+(coll? (linked-list :a :b :c))
+(coll? (linked-list))
 
 ;; NOTE: I'm not being able able to make the custom data reader due to the
 ;; encapsulation enforced with :volatile-mutable anottation.
