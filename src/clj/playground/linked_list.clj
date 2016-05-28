@@ -1,7 +1,4 @@
-(ns playground.linked-list
-  (:import
-   [java.lang UnsupportedOperationException]
-   [clojure.lang Seqable Counted IPersistentList IPersistentCollection ITransientCollection Sequential]))
+(ns playground.linked-list)
 
 (defprotocol INode
   (car [node] "yields the value of the node")
@@ -17,7 +14,7 @@
   (set-car! [this value] (set! car value) this)
   (cdr [_] cdr)
   (set-cdr! [this value] (set! cdr value) this)
-  IPersistentCollection
+  clojure.lang.IPersistentCollection
   (cons [this value]
     (node value this))
   (empty [this]
@@ -26,20 +23,20 @@
     (if (instance? Node value)
       (and (= (.car this) (.car value))
            (- (.cdr this) (.cdr value)))))
-  ITransientCollection
+  clojure.lang.ITransientCollection
   (conj [this value]
     (node value this))
   (persistent [this]
     (vec (seq this)))
-  IPersistentList
-  Sequential
-  Counted
+  clojure.lang.IPersistentList
+  clojure.lang.Sequential
+  clojure.lang.Counted
   (count [this]
     (loop [current this counter 0]
       (if (nil? current)
         counter
         (recur (.cdr current) (inc counter)))))
-  Seqable
+  clojure.lang.Seqable
   (seq [this]
     (loop [current this acc []]
       (if (nil? current)
@@ -50,27 +47,30 @@
   INode
   (car [_] nil)
   (set-car! [_ _]
-    (throw (UnsupportedOperationException. "can't set car on an empty node")))
+    (throw (java.lang.UnsupportedOperationException. "can't set car on an empty node")))
   (cdr [_] nil)
   (set-cdr! [_ _ ]
-    (throw (UnsupportedOperationException. "can't set cdr on an empty node")))
-  IPersistentCollection
+    (throw (java.lang.UnsupportedOperationException. "can't set cdr on an empty node")))
+  clojure.lang.IPersistentCollection
   (cons [_ value]
     (node value))
-  (empty [this] this)
+  (empty [this]
+    this)
   (equiv [_ value]
     (instance? EmptyListNode value))
-  ITransientCollection
+  clojure.lang.ITransientCollection
   (conj [_ value]
     (node value))
   (persistent [_]
     [])
-  IPersistentList
-  Sequential
-  Counted
-  (count [_] 0)
-  Seqable
-  (seq [_] (seq [])))
+  clojure.lang.IPersistentList
+  clojure.lang.Sequential
+  clojure.lang.Counted
+  (count [_]
+    0)
+  clojure.lang.Seqable
+  (seq [_]
+    (seq [])))
 
 (def EMPTY (->EmptyListNode))
 
