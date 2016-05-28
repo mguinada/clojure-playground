@@ -1,5 +1,6 @@
 (ns playground.linked-list
-  (:import [clojure.lang Seqable Counted]))
+  (:import [clojure.lang Seqable Counted]
+           [java.lang UnsupportedOperationException]))
 
 (defprotocol INode
   (car [node] "yields the value of the node")
@@ -7,10 +8,15 @@
   (set-car! [node value] "sets the value of car")
   (set-cdr! [mode value] "sets the value of cdr"))
 
+
 (deftype EmptyListNode []
   INode
   (car [_] nil)
+  (set-car! [_ _]
+    (throw (UnsupportedOperationException. "can't set car on an empty node")))
   (cdr [_] nil)
+  (set-cdr! [_ _ ]
+    (throw (UnsupportedOperationException. "can't set cdr on an empty node")))
   Counted
   (count [_] 0)
   Seqable
@@ -62,19 +68,19 @@
 
 ;; printers
 (defmethod print-method EmptyListNode [node ^java.io.Writer w]
-  (.write w (str "#linked-list ()")))
-
-(defmethod print-dup EmptyListNode [node ^java.io.Writer w]
-  (print-method node w))
+  (.write w (str "#playground/linked-list ()")))
 
 (defmethod print-method Node [node ^java.io.Writer w]
-  (.write w (str "#linked-list " (seq node) "")))
+  (.write w "#playground/linked-list ")
+  (print-method (seq node) w))
 
-(defmethod print-dup Node [node ^java.io.Writer w]
-  (print-method node w))
+;; the reader, see /data_readers.clj
+(defn linked-list-reader
+  [coll]
+  (apply linked-list coll))
 
 ;;
-;; DEMO
+;; demo
 ;;
 
 ;; node value reading
@@ -113,13 +119,8 @@
 (count (linked-list :a :b :c))
 (count (linked-list :a :b :c :d :e :f))
 
-(require '[clojure.tools.trace :as t])
-
-;(t/trace-vars linked-list)
-
-
-;; TODO
-
-;; implements stadnard clojure protocols
-;; inspect
-;; reader/writer literal
+;; NOTE: I'm not being able able to make the custom data reader due to the
+;; encapsulation enforced with :volatile-mutable anottation.
+;; the following line throws: No matching field found: car for class playground.linked_list.Node
+;;
+;; #playground/linked-list (:a :b :c)
