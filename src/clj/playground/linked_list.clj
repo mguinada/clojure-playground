@@ -22,7 +22,7 @@
   (equiv [this value]
     (if (instance? Node value)
       (and (= (.car this) (.car value))
-           (- (.cdr this) (.cdr value)))))
+           (= (.cdr this) (.cdr value)))))
   clojure.lang.ITransientCollection
   (conj [this value]
     (node value this))
