@@ -2,18 +2,14 @@
 
 (defprotocol INode
   (car [node] "yields the value of the node")
-  (cdr [node] "yields the next element of the list")
-  (set-car! [node value] "sets the value of car")
-  (set-cdr! [mode value] "sets the value of cdr"))
+  (cdr [node] "yields the next element of the list"))
 
 (declare node linked-list)
 
-(deftype Node [^:volatile-mutable car ^:volatile-mutable cdr]
+(deftype Node [car cdr]
   INode
   (car [_] car)
-  (set-car! [this value] (set! car value) this)
   (cdr [_] cdr)
-  (set-cdr! [this value] (set! cdr value) this)
   clojure.lang.IPersistentCollection
   (cons [this value]
     (node value this))
@@ -23,11 +19,6 @@
     (if (instance? Node value)
       (and (= (.car this) (.car value))
            (= (.cdr this) (.cdr value)))))
-  clojure.lang.ITransientCollection
-  (conj [this value]
-    (node value this))
-  (persistent [this]
-    (vec (seq this)))
   clojure.lang.IPersistentList
   clojure.lang.Sequential
   clojure.lang.Counted
@@ -46,11 +37,7 @@
 (deftype EmptyListNode []
   INode
   (car [_] nil)
-  (set-car! [_ _]
-    (throw (java.lang.UnsupportedOperationException. "can't set car on an empty node")))
   (cdr [_] nil)
-  (set-cdr! [_ _ ]
-    (throw (java.lang.UnsupportedOperationException. "can't set cdr on an empty node")))
   clojure.lang.IPersistentCollection
   (cons [_ value]
     (node value))
@@ -58,11 +45,6 @@
     this)
   (equiv [_ value]
     (instance? EmptyListNode value))
-  clojure.lang.ITransientCollection
-  (conj [_ value]
-    (node value))
-  (persistent [_]
-    [])
   clojure.lang.IPersistentList
   clojure.lang.Sequential
   clojure.lang.Counted
@@ -81,19 +63,12 @@
   ([car cdr] (->Node car cdr)))
 
 (defn linked-list
-  "Creats a new linked list from the given args"
+  "Creats a new linked list from the given args."
   ([] EMPTY)
   ([a] (node a))
   ([a b] (node a (node b)))
-  ([a b & more]
-   (let [head (linked-list a b)
-         tail (.cdr head)
-         link (fn [current new-value]
-                (-> current
-                    (set-cdr! (node new-value))
-                    (.cdr)))]
-     (reduce link tail more)
-     head)))
+  ([a b c] (node a (node b (node c))))
+  ([a b c & more] (node a (node b (node c (apply linked-list more))))))
 
 ;; printers
 (defmethod print-method EmptyListNode [node ^java.io.Writer w]
@@ -124,6 +99,8 @@
 (linked-list :a)
 (linked-list :a :b)
 (linked-list :a :b :c)
+(linked-list :a :b :c :d :e :f :g :h :i)
+(apply linked-list (range 100))
 
 ;; map and reduce
 
@@ -177,8 +154,8 @@
 (coll? (linked-list :a :b :c))
 (coll? (linked-list))
 
-;; NOTE: I'm not being able able to make the custom data reader due to the
-;; encapsulation enforced with :volatile-mutable anottation.
-;; the following line throws: No matching field found: car for class playground.linked_list.Node
-;;
-;; #playground/linked-list (:a :b :c)
+; Custom literal
+
+#playground/linked-list ()
+#playground/linked-list (:a :b :c)
+#playground/linked-list (:a :b :c :d :e :f :g :h :i :j)
