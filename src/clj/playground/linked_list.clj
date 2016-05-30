@@ -68,7 +68,7 @@
   ([a] (node a))
   ([a b] (node a (node b)))
   ([a b c] (node a (node b (node c))))
-  ([a b c & more] (node a (node b (node c (apply linked-list more))))))
+  ([a b c & more] (node a (node b (node c (into (linked-list) (reverse more)))))))
 
 ;; printers
 (defmethod print-method EmptyListNode [node ^java.io.Writer w]
@@ -109,8 +109,8 @@
 
 ;; it's Seqable
 
-(seq (linked-list :a :b :c :d :e :f))
 (seq (linked-list))
+(seq (linked-list :a :b :c :d :e :f))
 
 (first (linked-list))
 (first (linked-list :a :b :c :d :e :f))
@@ -156,6 +156,6 @@
 
 ; Custom literal
 
-#playground/linked-list ()
-#playground/linked-list (:a :b :c)
-#playground/linked-list (:a :b :c :d :e :f :g :h :i :j)
+(into [] #playground/linked-list) ()
+(into [] #playground/linked-list (:a :b :c))
+(into [] #playground/linked-list (:a :b :c :d :e :f :g :h :i :j))
