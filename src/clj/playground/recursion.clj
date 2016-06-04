@@ -1,4 +1,5 @@
 (ns playground.recursion
+  (:require [clojure.math.numeric-tower :as math])
   (:refer-clojure :exclude [repeat reverse]))
 
 ;; recursive length of a collection
@@ -140,3 +141,51 @@
 
 (def perfect-numbers
   (filter perfect-number? (iterate inc 6)))
+
+;; Triangular numbers
+(def triangular-numbers (lazy-seq (cons 0 (map + triangular-numbers (iterate inc 1)))))
+
+(take 10 triangular-numbers)
+
+;; or
+
+(defn triangular-numbers
+  ([] (triangular-numbers (iterate inc 0)))
+  ([coll]
+   (cons (first coll) (lazy-seq (map + (triangular-numbers coll) (rest coll))))))
+
+(take 10 (triangular-numbers))
+
+;; Polygonal number
+
+(defn polygonal-number
+  [n]
+  (/ (+ (math/expt n 2) n) 2))
+
+(def polygonal-numbers
+  (map polygonal-number (iterate inc 1)))
+
+;; with data recursion
+
+(def polygonal-numbers
+  (cons (polygonal-number 1) (lazy-seq (map polygonal-number (iterate inc 2)))))
+
+(take 10 polygonal-numbers)
+
+;; Catalan numbers - https://www.quora.com/What-is-most-famous-number-series-besides-Fibonacci/answer/Yash-Farooqui?srid=7MMi
+
+(defn catalan-number
+  [n]
+  {:pre [(>= n 0)]}
+  (/ (fact (* 2 n)) (* (fact (inc n)) (fact n))))
+
+(def catalan-numbers (cons 0 (lazy-seq (map catalan-number (iterate inc 1)))))
+
+(take 10 catalan-numbers)
+
+(defn catalan-numbers
+  ([] (catalan-numbers (iterate inc 0)))
+  ([coll]
+   (cons (catalan-number (first coll)) (lazy-seq (map catalan-number (rest coll))))))
+
+(take 10 (catalan-numbers))
