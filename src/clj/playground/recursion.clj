@@ -1,5 +1,6 @@
 (ns playground.recursion
-  (:require [clojure.math.numeric-tower :as math])
+  (:require [clojure.math.numeric-tower :as math]
+            [clojure.string :as string])
   (:refer-clojure :exclude [repeat reverse]))
 
 ;; recursive length of a collection
@@ -189,3 +190,27 @@
    (cons (catalan-number (first coll)) (lazy-seq (map catalan-number (rest coll))))))
 
 (take 10 (catalan-numbers))
+
+;; Look and say sequence - https://en.wikipedia.org/wiki/Look-and-say_sequence
+
+(defn num->coll
+  "Converts a number to a collection of it's digits"
+  [i]
+  (map #(Character/digit % 10) (seq (str i))))
+
+(defn look-and-say
+  "Look and say a number"
+  ([look]
+   (let [digits (num->coll look)]
+     (loop [current (first digits) coll digits say []]
+       (if (empty? coll)
+         (-> say (string/join) (bigdec))
+         (let [equals-count (count (take-while #(= current %) coll)) tail (nthrest coll equals-count)]
+           (recur (first tail) tail (conj say (str equals-count current)))))))))
+
+(defn look-and-say-sequence
+  "Infinite lazy sequence of look and say numbers"
+  ([] (look-and-say-sequence 1M))
+  ([a] (lazy-seq (cons a (look-and-say-sequence (look-and-say a))))))
+
+(take 10 (look-and-say-sequence))
