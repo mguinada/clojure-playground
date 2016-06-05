@@ -169,7 +169,7 @@
 ;; with data recursion
 
 (def polygonal-numbers
-  (cons (polygonal-number 1) (lazy-seq (map polygonal-number (iterate inc 2)))))
+  (lazy-seq (cons (polygonal-number 1) (map polygonal-number (iterate inc 2)))))
 
 (take 10 polygonal-numbers)
 
@@ -180,14 +180,14 @@
   {:pre [(>= n 0)]}
   (/ (fact (* 2 n)) (* (fact (inc n)) (fact n))))
 
-(def catalan-numbers (cons 0 (lazy-seq (map catalan-number (iterate inc 1)))))
+(def catalan-numbers (lazy-seq (cons 0 (map catalan-number (iterate inc 1)))))
 
 (take 10 catalan-numbers)
 
 (defn catalan-numbers
   ([] (catalan-numbers (iterate inc 0)))
   ([coll]
-   (cons (catalan-number (first coll)) (lazy-seq (map catalan-number (rest coll))))))
+   (lazy-seq (cons (catalan-number (first coll)) (map catalan-number (rest coll))))))
 
 (take 10 (catalan-numbers))
 
