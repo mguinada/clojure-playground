@@ -163,6 +163,8 @@
   [n]
   (/ (+ (math/expt n 2) n) 2))
 
+;; the best way to do it
+
 (def polygonal-numbers
   (map polygonal-number (iterate inc 1)))
 
@@ -179,10 +181,6 @@
   [n]
   {:pre [(>= n 0)]}
   (/ (fact (* 2 n)) (* (fact (inc n)) (fact n))))
-
-(def catalan-numbers (lazy-seq (cons 0 (map catalan-number (iterate inc 1)))))
-
-(take 10 catalan-numbers)
 
 (defn catalan-numbers
   ([] (catalan-numbers (iterate inc 0)))
@@ -214,3 +212,10 @@
   ([a] (lazy-seq (cons a (look-and-say-sequence (look-and-say a))))))
 
 (take 10 (look-and-say-sequence))
+
+;; Pronic numbers - https://en.wikipedia.org/wiki/Pronic_number
+
+(def pronic-numbers
+  (map * (iterate inc 0) (iterate inc 1)))
+
+(take 20 pronic-numbers)
