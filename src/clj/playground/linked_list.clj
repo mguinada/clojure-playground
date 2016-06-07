@@ -156,6 +156,6 @@
 
 ; Custom literal
 
-(into [] #playground/linked-list) ()
+(into [] #playground/linked-list ())
 (into [] #playground/linked-list (:a :b :c))
 (into [] #playground/linked-list (:a :b :c :d :e :f :g :h :i :j))

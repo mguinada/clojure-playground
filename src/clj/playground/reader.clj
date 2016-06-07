@@ -1,8 +1,7 @@
-(ns playground.reader
-  (:import [clojure.lang Seqable]))
+(ns playground.reader)
 
 (deftype Point [x y z]
-  Seqable
+  clojure.lang.Seqable
   (seq [_] (seq [x y z])))
 
 (defn point
@@ -20,7 +19,6 @@
   [coll]
   (apply point coll))
 
-(point-reader [1 2 3])
-
 ;; The reader literal
-#playground/point (1 2 3)
+(def p #playground/point (1 2 3))
+p
