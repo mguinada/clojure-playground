@@ -159,3 +159,17 @@
   (map * (iterate inc 0) (iterate inc 1)))
 
 (take 20 pronic-numbers)
+
+;; Collatz conjecture - https://en.wikipedia.org/wiki/Collatz_conjecture
+
+(defn collatz-number
+  [x]
+  (when-not (= x 1)
+    (if (even? x)
+      (/ x 2)
+      (inc (* 3 x)))))
+
+(defn collatz-sequence
+  [starting-at]
+  (if-not (nil? starting-at)
+    (lazy-seq (cons starting-at (collatz-numbers (collatz-number starting-at))))))

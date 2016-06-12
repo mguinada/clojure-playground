@@ -111,5 +111,4 @@
 (->> (reduce + numbers)
      (str)
      (take 10)
-     ;; (digits)
-     )
+     (digits))
