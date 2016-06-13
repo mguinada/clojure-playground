@@ -27,9 +27,3 @@
          loc)))
 
 (take 5 (iterate step board))
-
-(defn draw-world
-  ([cells] (draw-world cells 10))
-  ([cells world-size]
-   (for [r (range 0 (inc world-size))]
-     ())))
