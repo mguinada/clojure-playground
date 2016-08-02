@@ -48,8 +48,7 @@
   clojure.lang.IPersistentList
   clojure.lang.Sequential
   clojure.lang.Counted
-  (count [_]
-    0)
+  (count [_] 0)
   clojure.lang.Seqable
   (seq [_]
     (seq [])))
