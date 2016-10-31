@@ -19,26 +19,22 @@
   http://stackoverflow.com/a/5027749")
 
 (defprotocol Value
-  (blank? [this] [this args]))
+  (blank? [v] [v args]))
 
 (extend-protocol Value
   nil
-  (blank? [_]
-    true)
-  String
-  (blank? [str]
-    (empty? str))
+  (blank? [_] true)
+  java.lang.String
+  (blank? [str] (empty? str))
   clojure.lang.IPersistentCollection
-  (blank? [coll]
-    (empty? coll))
+  (blank? [coll] (empty? coll))
   java.lang.Object
-  (blank? [_]
-    false)
+  (blank? [_] false)
   clojure.lang.Fn
   (blank?
-    ([f]
-     (blank? (f)))
+    ([f] (blank? (f)))
     ([f args]
+     {:pre [(coll? args)]}
      (blank? (apply f args)))))
 
 (def present? (complement blank?))
