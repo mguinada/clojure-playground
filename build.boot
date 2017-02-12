@@ -2,11 +2,13 @@
  :source-paths    #{"src/clj"}
  :dependencies '[[adzerk/boot-reload "0.4.8" :scope "test"]
                  [org.clojure/math.numeric-tower "0.0.4"]
-                 [org.clojure/tools.trace        "0.7.9"]])
+                 [org.clojure/tools.trace        "0.7.9"]
+                 [metosin/boot-alt-test "0.1.2" :scope "test"]])
 
 (require
- '[boot.task.built-in          :refer [aot]]
- '[adzerk.boot-reload          :refer [reload]])
+ '[boot.task.built-in    :refer [aot]]
+ '[adzerk.boot-reload    :refer [reload]]
+ '[metosin.boot-alt-test :refer [alt-test]])
 
 ;;clojure namespace tools integration
 (swap! boot.repl/*default-dependencies* conj
@@ -41,6 +43,16 @@
         (repl)
         (reload)
         (build)))
+
+(deftask run-tests
+  [a autotest bool "If no exception should be thrown when tests fail"]
+  (comp
+   (alt-test :fail (not autotest))))
+
+(deftask autotest []
+  (comp
+   (watch)
+   (run-tests :autotest true)))
 
 (deftask development []
   identity)
