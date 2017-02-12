@@ -172,4 +172,4 @@
 (defn collatz-sequence
   [starting-at]
   (if-not (nil? starting-at)
-    (lazy-seq (cons starting-at (collatz-numbers (collatz-number starting-at))))))
+    (lazy-seq (cons starting-at (collatz-number (collatz-number starting-at))))))
