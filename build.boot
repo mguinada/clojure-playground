@@ -20,8 +20,8 @@
 
 ;; CIDER integration
 (swap! boot.repl/*default-dependencies*
-       concat '[[cider/cider-nrepl "0.12.0-SNAPSHOT"]
-                [refactor-nrepl "2.0.0-SNAPSHOT"]])
+       concat '[[cider/cider-nrepl "0.15.1"]
+                [refactor-nrepl "2.3.1"]])
 
 (swap! boot.repl/*default-middleware*
        conj 'cider.nrepl/cider-middleware)
