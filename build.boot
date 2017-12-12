@@ -10,7 +10,7 @@
  '[adzerk.boot-reload    :refer [reload]]
  '[metosin.boot-alt-test :refer [alt-test]])
 
-;;clojure namespace tools integration
+;; clojure namespace tools integration
 (swap! boot.repl/*default-dependencies* conj
       '[org.clojure/tools.namespace "0.2.11"])
 
@@ -27,10 +27,10 @@
        conj 'cider.nrepl/cider-middleware)
 
 ;; Light Table integration
-(swap! boot.repl/*default-dependencies*
-       concat '[[lein-light-nrepl "0.3.2"]])
-(swap! boot.repl/*default-middleware*
-       conj 'lighttable.nrepl.handler/lighttable-ops)
+;; (swap! boot.repl/*default-dependencies*
+;;        concat '[[lein-light-nrepl "0.3.2"]])
+;; (swap! boot.repl/*default-middleware*
+;;        conj 'lighttable.nrepl.handler/lighttable-ops)
 
 ;; Tasks
 
